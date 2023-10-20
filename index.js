@@ -27,7 +27,9 @@ async function run() {
     await client.connect();
 
     const productsCollection = client.db("productsDB").collection("newProducts");
+    const cartCollection = client.db("productsDB").collection("cartedProducts");
 
+    // for all product
     app.post('/products', async(req, res)=>{
         const product = req.body;
         console.log(product);
@@ -35,6 +37,22 @@ async function run() {
         res.send(result)
       })
 
+      //for carted product
+      app.post('/cart/products', async(req, res)=>{
+        const product = req.body;
+        console.log(product);
+        const result = await cartCollection.insertOne(product);
+        res.send(result)
+      })
+
+      // get Carted Product for client side
+      app.get('/cart/products', async(req, res)=>{
+        const cursor = cartCollection.find();
+        const products = await cursor.toArray();
+        res.send(products)
+      })
+
+      // get all product for client side
       app.get('/products', async(req, res)=>{
         const cursor = productsCollection.find();
         const products = await cursor.toArray();
@@ -77,6 +95,16 @@ async function run() {
         }
   
         const result = await productsCollection.updateOne(filter, updateProduct, options)
+        res.send(result)
+      })
+
+
+      // delete product from cart 
+      app.delete('/cart/products/:id', async(req, res)=>{
+        const id = req.params.id;
+
+        const query = {_id: new ObjectId(id)}
+        const result = await cartCollection.deleteOne(query)
         res.send(result)
       })
 

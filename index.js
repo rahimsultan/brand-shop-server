@@ -49,6 +49,15 @@ async function run() {
         res.send(result)
       })
 
+      app.get('/product/:brandname',async(req, res)=>{
+        const brandName = req.params.brandname;
+        console.log(brandName);
+        
+        const query = {brand: brandName};
+        const result = await productsCollection.find(query).toArray()
+        res.send(result)
+      })
+
 
 
     // Send a ping to confirm a successful connection
@@ -63,7 +72,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res)=>{ 
-res.send('hello from server') 
+res.send('Hello From assignment server') 
 })
 
 app.listen(port, ()=>{ 
